@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local env overrides only — .env.development / .env.staging / .env.production are committed
+.env.*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
