@@ -1,18 +1,18 @@
-import { ThemeProvider, CssBaseline } from '@mui/material'
-import { Provider } from 'react-redux'
-import { store } from './store'
-import theme from './theme'
-import LoginPage from './pages/LoginPage'
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import theme from "./theme";
+import AppRouter from "./router";
 
 function App() {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <LoginPage />
+        <AppRouter />
       </ThemeProvider>
     </Provider>
-  )
+  );
 }
 
-export default App
+export default App;

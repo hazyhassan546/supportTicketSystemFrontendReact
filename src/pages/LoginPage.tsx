@@ -1,21 +1,29 @@
-import { useState, FormEvent } from 'react'
-import { Alert, Box, Paper } from '@mui/material'
-import { AppText, AppInput, AppButton } from '../components/common'
-import { useAppDispatch, useAppSelector } from '../store'
-import { loginAction, clearError } from '../store/slices/authSlice'
+import { useState, FormEvent, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Alert, Box, Paper } from "@mui/material";
+import { AppText, AppInput, AppButton } from "../components/common";
+import { useAppDispatch, useAppSelector } from "../store";
+import { loginAction, clearError } from "../store/slices/authSlice";
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error, token } = useAppSelector((state) => state.auth);
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [token, navigate]);
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    dispatch(clearError())
-    dispatch(loginAction({ email, password }))
-  }
+    e.preventDefault();
+    dispatch(clearError());
+    dispatch(loginAction({ email, password }));
+  };
 
   return (
     <Box
@@ -27,22 +35,32 @@ export default function LoginPage() {
     >
       <Paper
         elevation={3}
-        sx={{ p: 4, width: '100%', maxWidth: 400, borderRadius: 2 }}
+        sx={{ p: 4, width: "100%", maxWidth: 400, borderRadius: 2 }}
       >
-        <AppText variant="h5" fontWeight={700} mb={0.5} textAlign="center">
-          Support Ticket System
+        <AppText variant="h5" sx={{ fontWeight: 700, mb: 0.5, textAlign: "center" }}>
+          {"Support Ticket System"}
         </AppText>
-        <AppText variant="body2" color="text.secondary" textAlign="center" mb={3}>
-          Sign in to your account
+        <AppText variant="body2" sx={{ color: "text.secondary", textAlign: "center", mb: 3 }}>
+          {"Sign in to your account"}
         </AppText>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => dispatch(clearError())}>
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+            onClose={() => dispatch(clearError())}
+          >
             {error}
           </Alert>
         )}
 
-        <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          display="flex"
+          flexDirection="column"
+          gap={2}
+        >
           <AppInput
             label="Email"
             type="email"
@@ -67,10 +85,10 @@ export default function LoginPage() {
             loading={loading}
             sx={{ mt: 1 }}
           >
-            Sign In
+            {"Sign In"}
           </AppButton>
         </Box>
       </Paper>
     </Box>
-  )
+  );
 }
