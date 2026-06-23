@@ -1,17 +1,25 @@
-import { useState, FormEvent, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { Alert, Box, Paper } from "@mui/material";
 import { AppText, AppInput, AppButton } from "../components/common";
 import { useAppDispatch, useAppSelector } from "../store";
 import { loginAction, clearError } from "../store/slices/authSlice";
 
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
+
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { loading, error, token } = useAppSelector((state) => state.auth);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -19,11 +27,14 @@ export default function LoginPage() {
     }
   }, [token, navigate]);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    dispatch(clearError());
-    dispatch(loginAction({ email, password }));
-  };
+  const formik = useFormik({
+    initialValues: { email: "", password: "" },
+    validationSchema,
+    onSubmit: (values) => {
+      dispatch(clearError());
+      dispatch(loginAction(values));
+    },
+  });
 
   return (
     <Box
@@ -56,26 +67,31 @@ export default function LoginPage() {
 
         <Box
           component="form"
-          onSubmit={handleSubmit}
-          display="flex"
-          flexDirection="column"
-          gap={2}
+          onSubmit={formik.handleSubmit}
+          noValidate
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           <AppInput
             label="Email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            name="email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
             autoComplete="email"
             autoFocus
           />
           <AppInput
             label="Password"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            name="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
             autoComplete="current-password"
           />
           <AppButton
