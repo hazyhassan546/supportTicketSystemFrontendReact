@@ -1,13 +1,7 @@
-import Box from "@mui/material/Box";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { AppText, AppTable } from "../components/common";
+import { MasterLayout, AppText, AppTable } from "../components/common";
 import type { Column } from "../components/common";
-import { useAppDispatch, useAppSelector } from "../store";
-import { logoutAction } from "../store/slices/authSlice";
+import { useAppSelector } from "../store";
 
 type TicketRow = {
   id: string;
@@ -32,45 +26,24 @@ const COLUMNS: Column<TicketRow>[] = [
 ];
 
 export default function DashboardPage() {
-  const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
 
-  const handleLogout = () => {
-    dispatch(logoutAction());
-  };
-
   return (
-    <Box minHeight="100vh" bgcolor="grey.50">
-      <AppBar position="static" elevation={1}>
-        <Toolbar sx={{ gap: 2 }}>
-          <AppText variant="h6" sx={{ fontWeight: 700, flexGrow: 1, color: "white" }}>
-            Support Ticket System
-          </AppText>
-          <AppText variant="body2" sx={{ color: "rgba(255,255,255,0.85)", whiteSpace: "nowrap" }}>
-            {user?.name ?? user?.email ?? ""}
-          </AppText>
-          <IconButton color="inherit" onClick={handleLogout} title="Logout">
-            <LogoutIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+    <MasterLayout>
+      <AppText variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>
+        Dashboard
+      </AppText>
+      <AppText variant="body2" sx={{ color: "text.secondary", mb: 3 }}>
+        Welcome back{user?.name ? `, ${user.name}` : ""}. Here are your recent tickets.
+      </AppText>
 
-      <Box p={4}>
-        <AppText variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>
-          Dashboard
-        </AppText>
-        <AppText variant="body2" sx={{ color: "text.secondary", mb: 3 }}>
-          Welcome back{user?.name ? `, ${user.name}` : ""}. Here are your recent tickets.
-        </AppText>
+      <Divider sx={{ mb: 3 }} />
 
-        <Divider sx={{ mb: 3 }} />
-
-        <AppTable<TicketRow>
-          columns={COLUMNS}
-          rows={DEMO_ROWS}
-          rowKey="id"
-        />
-      </Box>
-    </Box>
+      <AppTable<TicketRow>
+        columns={COLUMNS}
+        rows={DEMO_ROWS}
+        rowKey="id"
+      />
+    </MasterLayout>
   );
 }
