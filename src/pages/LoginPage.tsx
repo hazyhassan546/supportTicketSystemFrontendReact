@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import { Alert, Box, Grid, Paper } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { Alert, Box, Divider, Grid, Link, Paper } from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { AppText, AppInput, AppButton } from "../components/common";
 import { useAppDispatch, useAppSelector } from "../store";
 import { loginAction, clearError } from "../store/slices/authSlice";
@@ -11,6 +13,9 @@ import { AppImages } from "../common/images";
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { palette } = useTheme();
+  const { brand } = palette;
+
   const { loading, error, token } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
@@ -29,153 +34,213 @@ export default function LoginPage() {
   });
 
   return (
-    <Box
+    <Grid
+      container
       sx={{
-        backgroundImage: `url(${AppImages.loginBackground})`,
-        backgroundSize: "cover",
-        backgroundColor: "grey.100",
-        height: "100vh",
-        display: "flex",
-        alignItems: "center",
+        minHeight: "100vh",
+        position: "relative",
+        overflow: "hidden",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          inset: 0,
+          backgroundImage: `url(${AppImages.loginBackground})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          zIndex: 0,
+        },
+        "&::after": {
+          content: '""',
+          position: "absolute",
+          inset: 0,
+          background: `linear-gradient(135deg, ${brand.overlayStart} 0%, ${brand.overlayEnd} 100%)`,
+          zIndex: 0,
+        },
       }}
     >
+      {/* ── Left panel: branding ── */}
       <Grid
-        container
-        spacing={2}
+        size={{ xs: 12, md: 6 }}
         sx={{
-          flexGrow: 1,
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: { xs: 260, md: "100vh" },
         }}
       >
-        <Grid
-          size={{ xs: 12, sm: 12, md: 5 }}
+        <Box
           sx={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             flexDirection: "column",
+            alignItems: "center",
+            px: { xs: 3, md: 6 },
+            py: { xs: 4, md: 0 },
+            gap: { xs: 1, md: 2 },
           }}
         >
-          <img
+          <Box
+            component="img"
             src={AppImages.appLogo}
             alt="App Logo"
-            style={{ width: "120px", marginBottom: "20px" }}
+            sx={{
+              width: { xs: 52, md: 80 },
+              height: { xs: 52, md: 80 },
+              filter: "brightness(0) invert(1)",
+              mb: 1,
+            }}
           />
           <AppText
-            variant="h4"
+            variant="h3"
             sx={{
-              fontWeight: 700,
-              mb: 0.5,
+              fontWeight: 800,
+              color: brand.panelText,
               textAlign: "center",
-              color: "white",
+              lineHeight: 1.2,
+              fontSize: { xs: "1.6rem", sm: "2rem", md: "3rem" },
             }}
           >
-            {"Support Ticket System"}
+            Support Ticket System
           </AppText>
           <AppText
-            variant={"h6"}
+            variant="body1"
             sx={{
-              mb: 0.5,
+              color: brand.panelTextMuted,
               textAlign: "center",
-              color: "white",
+              maxWidth: 360,
+              display: { xs: "none", sm: "block" },
             }}
           >
-            {"Powered by React, Redux, and Material-UI"}
+            Manage, track and resolve customer issues — all in one place.
           </AppText>
-        </Grid>
-        <Grid
-          size={{ xs: 0, sm: 0, md: 1 }}
+
+          <Divider sx={{ width: 60, borderColor: brand.panelDivider, mt: 1 }} />
+
+          <AppText
+            variant="caption"
+            sx={{ color: brand.panelTextFaint, textAlign: "center" }}
+          >
+            Powered by React · Redux · Material-UI
+          </AppText>
+        </Box>
+      </Grid>
+
+      {/* ── Right panel: login form ── */}
+      <Grid
+        size={{ xs: 12, md: 6 }}
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: { xs: 2, sm: 6 },
+          py: { xs: 6, md: 0 },
+        }}
+      >
+        <Paper
+          elevation={0}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRight: "1px solid white",
-          }}
-        ></Grid>
-        <Grid
-          size={{ xs: 12, sm: 12, md: 6 }}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            width: "100%",
+            maxWidth: 420,
+            p: { xs: 3, sm: 5 },
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            bgcolor: "background.paper",
           }}
         >
-          <Paper
-            elevation={3}
+          <Box
             sx={{
-              p: 4,
-              width: "100%",
-              maxWidth: 400,
-              borderRadius: 2,
-              backgroundColor: "rgba(253, 253, 253, 0.2)",
+              width: 52,
+              height: 52,
+              borderRadius: "50%",
+              bgcolor: "primary.main",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 3,
+              mx: "auto",
             }}
           >
-            <AppText
-              variant="h5"
-              sx={{ fontWeight: 700, mb: 0.5, textAlign: "center" }}
-            >
-              {"Sign In"}
-            </AppText>
-            <AppText
-              variant="body2"
-              sx={{ color: "text.secondary", textAlign: "center", mb: 3 }}
-            >
-              {"Sign in to your account"}
-            </AppText>
+            <LockOutlinedIcon sx={{ color: "common.white", fontSize: 26 }} />
+          </Box>
 
-            {error && (
-              <Alert
-                severity="error"
-                sx={{ mb: 2 }}
-                onClose={() => dispatch(clearError())}
-              >
-                {error}
-              </Alert>
-            )}
+          <AppText variant="h5" sx={{ fontWeight: 700, textAlign: "center", mb: 0.5 }}>
+            Welcome back
+          </AppText>
+          <AppText
+            variant="body2"
+            sx={{ color: "text.secondary", textAlign: "center", mb: 3 }}
+          >
+            Sign in to your account to continue
+          </AppText>
 
-            <Box
-              component="form"
-              onSubmit={formik.handleSubmit}
-              noValidate
-              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          {error && (
+            <Alert
+              severity="error"
+              sx={{ mb: 2, borderRadius: 2 }}
+              onClose={() => dispatch(clearError())}
             >
-              <AppInput
-                label="Email"
-                type="email"
-                name="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
-                autoComplete="email"
-                autoFocus
-              />
-              <AppInput
-                label="Password"
-                type="password"
-                name="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                helperText={formik.touched.password && formik.errors.password}
-                autoComplete="current-password"
-              />
-              <AppButton
-                type="submit"
-                variant="contained"
-                fullWidth
-                loading={loading}
-                sx={{ mt: 1 }}
+              {error}
+            </Alert>
+          )}
+
+          <Box
+            component="form"
+            onSubmit={formik.handleSubmit}
+            noValidate
+            sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
+          >
+            <AppInput
+              label="Email address"
+              type="email"
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+              autoComplete="email"
+            />
+            <AppInput
+              label="Password"
+              type="password"
+              name="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+              autoComplete="current-password"
+            />
+
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: -1 }}>
+              <Link
+                href="#"
+                underline="hover"
+                variant="body2"
+                sx={{ color: "primary.main" }}
               >
-                {"Sign In"}
-              </AppButton>
+                Forgot password?
+              </Link>
             </Box>
-          </Paper>
-        </Grid>
+
+            <AppButton
+              type="submit"
+              variant="contained"
+              fullWidth
+              loading={loading}
+              size="large"
+              sx={{ borderRadius: 2, py: 1.2, fontWeight: 600, fontSize: "1rem" }}
+            >
+              Sign In
+            </AppButton>
+          </Box>
+        </Paper>
       </Grid>
-    </Box>
+    </Grid>
   );
 }
