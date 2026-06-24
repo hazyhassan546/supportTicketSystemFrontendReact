@@ -1,26 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { Alert, Box, Divider, Grid, Link, Paper } from "@mui/material";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
-import { AppText, AppInput, AppButton, AppDropdown } from "../components/common";
+import {
+  AppText,
+  AppInput,
+  AppButton,
+  AppDropdown,
+} from "../components/common";
 import { useAppDispatch, useAppSelector } from "../store";
 import { registerAction, clearError } from "../store/slices/authSlice";
 import { registerSchema } from "../schemas/authSchemas";
 import { AppImages } from "../common/images";
 import type { DropdownOption } from "../components/common";
-
-const DEPARTMENT_OPTIONS: DropdownOption[] = [
-  { label: "Engineering", value: "engineering" },
-  { label: "Human Resources", value: "hr" },
-  { label: "Finance", value: "finance" },
-  { label: "Sales", value: "sales" },
-  { label: "Marketing", value: "marketing" },
-  { label: "Customer Support", value: "customer_support" },
-  { label: "IT / Infrastructure", value: "it" },
-  { label: "Operations", value: "operations" },
-];
+import lookupsApi from "../api/lookupsApi";
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
@@ -30,6 +25,24 @@ export default function RegisterPage() {
 
   const { loading, error, token } = useAppSelector((state) => state.auth);
 
+  const [departmentOptions, setDepartmentOptions] = useState<DropdownOption[]>(
+    [],
+  );
+  const [departmentsLoading, setDepartmentsLoading] = useState(true);
+
+  useEffect(() => {
+    lookupsApi
+      .getDepartments()
+      .then((res) => {
+        const options = res.data.data.map((d) => ({
+          label: d.name,
+          value: String(d.id),
+        }));
+        setDepartmentOptions(options);
+      })
+      .finally(() => setDepartmentsLoading(false));
+  }, []);
+
   useEffect(() => {
     if (token) {
       navigate("/dashboard", { replace: true });
@@ -37,11 +50,26 @@ export default function RegisterPage() {
   }, [token, navigate]);
 
   const formik = useFormik({
-    initialValues: { name: "", email: "", phone: "", department: "", password: "", confirmPassword: "" },
+    initialValues: {
+      name: "",
+      email: "",
+      phone: "",
+      department: "",
+      password: "",
+      confirmPassword: "",
+    },
     validationSchema: registerSchema,
     onSubmit: ({ name, email, phone, department, password }) => {
       dispatch(clearError());
-      dispatch(registerAction({ name, email, phone, department, password }));
+      dispatch(
+        registerAction({
+          name,
+          email,
+          phone,
+          department_id: department,
+          password,
+        }),
+      );
     },
   });
 
@@ -177,10 +205,15 @@ export default function RegisterPage() {
               mx: "auto",
             }}
           >
-            <PersonAddOutlinedIcon sx={{ color: "common.white", fontSize: 26 }} />
+            <PersonAddOutlinedIcon
+              sx={{ color: "common.white", fontSize: 26 }}
+            />
           </Box>
 
-          <AppText variant="h5" sx={{ fontWeight: 700, textAlign: "center", mb: 0.5 }}>
+          <AppText
+            variant="h5"
+            sx={{ fontWeight: 700, textAlign: "center", mb: 0.5 }}
+          >
             Create account
           </AppText>
           <AppText
@@ -256,9 +289,17 @@ export default function RegisterPage() {
                   value={formik.values.department}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  error={formik.touched.department && Boolean(formik.errors.department)}
-                  helperText={formik.touched.department ? formik.errors.department : undefined}
-                  options={DEPARTMENT_OPTIONS}
+                  error={
+                    formik.touched.department &&
+                    Boolean(formik.errors.department)
+                  }
+                  helperText={
+                    formik.touched.department
+                      ? formik.errors.department
+                      : undefined
+                  }
+                  options={departmentOptions}
+                  disabled={departmentsLoading}
                 />
               </Grid>
 
@@ -271,7 +312,9 @@ export default function RegisterPage() {
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  error={formik.touched.password && Boolean(formik.errors.password)}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
                   helperText={formik.touched.password && formik.errors.password}
                   autoComplete="new-password"
                 />
@@ -289,7 +332,8 @@ export default function RegisterPage() {
                     Boolean(formik.errors.confirmPassword)
                   }
                   helperText={
-                    formik.touched.confirmPassword && formik.errors.confirmPassword
+                    formik.touched.confirmPassword &&
+                    formik.errors.confirmPassword
                   }
                   autoComplete="new-password"
                 />
@@ -302,12 +346,20 @@ export default function RegisterPage() {
               fullWidth
               loading={loading}
               size="large"
-              sx={{ borderRadius: 2, py: 1.2, fontWeight: 600, fontSize: "1rem" }}
+              sx={{
+                borderRadius: 2,
+                py: 1.2,
+                fontWeight: 600,
+                fontSize: "1rem",
+              }}
             >
               Create Account
             </AppButton>
 
-            <AppText variant="body2" sx={{ textAlign: "center", color: "text.secondary" }}>
+            <AppText
+              variant="body2"
+              sx={{ textAlign: "center", color: "text.secondary" }}
+            >
               Already have an account?{" "}
               <Link
                 component={RouterLink}

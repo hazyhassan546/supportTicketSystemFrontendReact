@@ -1,40 +1,40 @@
-import axiosInstance from './axiosInstance'
+import axiosInstance from "./axiosInstance";
 
 export type LoginPayload = {
-  email: string
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 export type LoginResponse = {
-  token: string
+  token: string;
   user: {
-    id: string
-    email: string
-    name: string
-    role: string
-  }
-}
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+  };
+};
 
 export type RegisterPayload = {
-  name: string
-  email: string
-  phone: string
-  department: string
-  password: string
-}
+  name: string;
+  email: string;
+  phone: string;
+  department_id: string;
+  password: string;
+};
 
-export type RegisterResponse = LoginResponse
+export type RegisterResponse = LoginResponse;
 
 const authApi = {
   login: (payload: LoginPayload) =>
-    axiosInstance.post<LoginResponse>('/auth/login', payload),
+    axiosInstance.post<LoginResponse>("/auth/login", payload),
 
   register: (payload: RegisterPayload) =>
-    axiosInstance.post<RegisterResponse>('/auth/register', payload),
+    axiosInstance.post<RegisterResponse>("/auth/register", payload),
 
-  logout: () => axiosInstance.post('/auth/logout'),
+  logout: () => axiosInstance.post("/auth/logout"),
 
-  getProfile: () => axiosInstance.get<LoginResponse['user']>('/auth/me'),
-}
+  getProfile: () => axiosInstance.get<LoginResponse["user"]>("/auth/me"),
+};
 
-export default authApi
+export default authApi;
