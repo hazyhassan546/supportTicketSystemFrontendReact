@@ -8,3 +8,23 @@ export const loginSchema = Yup.object({
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
 });
+
+export const registerSchema = Yup.object({
+  name: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .required("Full name is required"),
+  email: Yup.string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  phone: Yup.string()
+    .matches(/^\+?[0-9\s\-().]{7,20}$/, "Enter a valid phone number")
+    .required("Phone number is required"),
+  department: Yup.string()
+    .required("Please select a department"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords do not match")
+    .required("Please confirm your password"),
+});

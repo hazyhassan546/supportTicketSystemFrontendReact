@@ -28,7 +28,7 @@ export default function AppDropdown({
   return (
     <FormControl fullWidth size="small" error={error}>
       <InputLabel id={labelId}>{label}</InputLabel>
-      <Select labelId={labelId} label={label} {...props}>
+      <Select labelId={labelId} label={label} sx={{ textAlign: 'left' }} {...props}>
         {options.map((opt) => (
           <MenuItem key={opt.value} value={opt.value}>
             {opt.label}

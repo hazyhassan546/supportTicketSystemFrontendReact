@@ -15,9 +15,22 @@ export type LoginResponse = {
   }
 }
 
+export type RegisterPayload = {
+  name: string
+  email: string
+  phone: string
+  department: string
+  password: string
+}
+
+export type RegisterResponse = LoginResponse
+
 const authApi = {
   login: (payload: LoginPayload) =>
     axiosInstance.post<LoginResponse>('/auth/login', payload),
+
+  register: (payload: RegisterPayload) =>
+    axiosInstance.post<RegisterResponse>('/auth/register', payload),
 
   logout: () => axiosInstance.post('/auth/logout'),
 

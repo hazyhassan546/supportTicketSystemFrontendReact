@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { Alert, Box, Divider, Grid, Link, Paper } from "@mui/material";
@@ -110,7 +110,7 @@ export default function LoginPage() {
               color: brand.panelTextMuted,
               textAlign: "center",
               maxWidth: 360,
-              display: { xs: "none", sm: "block" },
+              display: { sm: "block" },
             }}
           >
             Manage, track and resolve customer issues — all in one place.
@@ -122,7 +122,8 @@ export default function LoginPage() {
             variant="caption"
             sx={{ color: brand.panelTextFaint, textAlign: "center" }}
           >
-            Powered by React · Redux · Material-UI
+            Powered by AI · React · Redux · Material-UI · Express · Node.js ·
+            MySQL
           </AppText>
         </Box>
       </Grid>
@@ -168,7 +169,10 @@ export default function LoginPage() {
             <LockOutlinedIcon sx={{ color: "common.white", fontSize: 26 }} />
           </Box>
 
-          <AppText variant="h5" sx={{ fontWeight: 700, textAlign: "center", mb: 0.5 }}>
+          <AppText
+            variant="h5"
+            sx={{ fontWeight: 700, textAlign: "center", mb: 0.5 }}
+          >
             Welcome back
           </AppText>
           <AppText
@@ -234,10 +238,26 @@ export default function LoginPage() {
               fullWidth
               loading={loading}
               size="large"
-              sx={{ borderRadius: 2, py: 1.2, fontWeight: 600, fontSize: "1rem" }}
+              sx={{
+                borderRadius: 2,
+                py: 1.2,
+                fontWeight: 600,
+                fontSize: "1rem",
+              }}
             >
-              Sign In
+              {"Sign In"}
             </AppButton>
+            <AppText variant="body2" sx={{ textAlign: "center", color: "text.secondary" }}>
+              Don&apos;t have an account?{" "}
+              <Link
+                component={RouterLink}
+                to="/register"
+                underline="hover"
+                sx={{ color: "primary.main", fontWeight: 500 }}
+              >
+                Sign up
+              </Link>
+            </AppText>
           </Box>
         </Paper>
       </Grid>
