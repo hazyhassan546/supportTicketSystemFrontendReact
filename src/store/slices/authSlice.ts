@@ -11,8 +11,10 @@ type AuthState = {
   error: string | null;
 };
 
+const storedUser = localStorage.getItem("user");
+
 const initialState: AuthState = {
-  user: null,
+  user: storedUser ? (JSON.parse(storedUser) as User) : null,
   token: localStorage.getItem("token"),
   loading: false,
   error: null,
@@ -38,7 +40,7 @@ export const registerAction = createAsyncThunk<RegisterResponse, RegisterPayload
   async (payload, { rejectWithValue }) => {
     try {
       const response = await authApi.register(payload);
-      return response.data;
+      return response.data?.data;
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } }).response?.data
@@ -72,6 +74,7 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.user = action.payload.user;
         localStorage.setItem("token", action.payload.token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(loginAction.rejected, (state, action) => {
         state.loading = false;
@@ -86,6 +89,7 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.user = action.payload.user;
         localStorage.setItem("token", action.payload.token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(registerAction.rejected, (state, action) => {
         state.loading = false;
@@ -94,6 +98,7 @@ const authSlice = createSlice({
       .addCase(logoutAction.fulfilled, (state) => {
         state.user = null;
         state.token = null;
+        localStorage.removeItem("user");
       });
   },
 });
