@@ -46,6 +46,7 @@ export default function AddTicketPage() {
       department_id: "",
     },
     validationSchema: ticketSchema,
+    validateOnChange: false,
     onSubmit: async (values) => {
       const result = await dispatch(
         createTicketAction({

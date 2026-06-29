@@ -27,6 +27,7 @@ export default function LoginPage() {
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: loginSchema,
+    validateOnChange: false,
     onSubmit: (values) => {
       dispatch(clearError());
       dispatch(loginAction(values));

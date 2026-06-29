@@ -59,6 +59,7 @@ export default function RegisterPage() {
       confirmPassword: "",
     },
     validationSchema: registerSchema,
+    validateOnChange: false,
     onSubmit: ({ name, email, phone, department, password }) => {
       dispatch(clearError());
       dispatch(
