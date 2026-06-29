@@ -32,12 +32,18 @@ export default function AddTicketPage() {
     [lookups],
   );
 
+  const departmentOptions: DropdownOption[] = useMemo(
+    () => (lookups?.departments ?? []).map((d) => ({ label: d.name, value: String(d.id) })),
+    [lookups],
+  );
+
   const formik = useFormik({
     initialValues: {
       title: "",
       description: "",
       category_id: "",
       priority_id: "",
+      department_id: "",
     },
     validationSchema: ticketSchema,
     onSubmit: async (values) => {
@@ -47,6 +53,7 @@ export default function AddTicketPage() {
           description: values.description,
           category_id: Number(values.category_id),
           priority_id: Number(values.priority_id),
+          department_id: Number(values.department_id),
         }),
       );
       if (createTicketAction.fulfilled.match(result)) {
@@ -134,6 +141,19 @@ export default function AddTicketPage() {
                 error={formik.touched.priority_id && Boolean(formik.errors.priority_id)}
                 helperText={formik.touched.priority_id ? formik.errors.priority_id : undefined}
                 options={priorityOptions}
+                disabled={!lookups}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <AppDropdown
+                label="Department"
+                name="department_id"
+                value={formik.values.department_id}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.department_id && Boolean(formik.errors.department_id)}
+                helperText={formik.touched.department_id ? formik.errors.department_id : undefined}
+                options={departmentOptions}
                 disabled={!lookups}
               />
             </Grid>

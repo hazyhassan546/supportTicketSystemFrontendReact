@@ -4,6 +4,7 @@ import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
 import TicketsPage from "../pages/TicketsPage";
 import AddTicketPage from "../pages/AddTicketPage";
+import TicketDetailPage from "../pages/TicketDetailPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -34,6 +35,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <AddTicketPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tickets/:id"
+          element={
+            <ProtectedRoute>
+              <TicketDetailPage />
             </ProtectedRoute>
           }
         />

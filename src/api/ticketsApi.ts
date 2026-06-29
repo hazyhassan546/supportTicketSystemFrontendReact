@@ -26,15 +26,20 @@ export type CreateTicketPayload = {
   description: string
   category_id: number
   priority_id: number
+  department_id: number
 }
 
 type TicketsResponse = { data: Ticket[] }
-type CreateTicketResponse = { data: Ticket }
+type TicketResponse = { data: Ticket }
 
 const ticketsApi = {
   getTickets: () => axiosInstance.get<TicketsResponse>('/tickets'),
+  getTicketById: (id: number) => axiosInstance.get<TicketResponse>(`/tickets/${id}`),
   createTicket: (payload: CreateTicketPayload) =>
-    axiosInstance.post<CreateTicketResponse>('/tickets', payload),
+    axiosInstance.post<TicketResponse>('/tickets', payload),
+  deleteTicket: (id: number) => axiosInstance.delete(`/tickets/${id}`),
+  resolveTicket: (id: number, comment: string) =>
+    axiosInstance.patch<TicketResponse>(`/tickets/${id}/resolve`, { comment }),
 }
 
 export default ticketsApi

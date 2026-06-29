@@ -9,6 +9,7 @@ export const ticketSchema = Yup.object({
     .required("Description is required"),
   category_id: Yup.string().required("Please select a category"),
   priority_id: Yup.string().required("Please select a priority"),
+  department_id: Yup.string().required("Please select a department"),
 });
 
 export const loginSchema = Yup.object({
