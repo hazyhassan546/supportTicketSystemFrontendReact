@@ -1,7 +1,10 @@
 import { useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
+import AddIcon from "@mui/icons-material/Add";
 import { MasterLayout, AppText, AppTable } from "../components/common";
 import type { Column } from "../components/common";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -10,6 +13,7 @@ import type { Ticket } from "../api/ticketsApi";
 
 export default function TicketsPage() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { tickets, loading } = useAppSelector((state) => state.tickets);
   const lookups = useAppSelector((state) => state.lookups.data);
 
@@ -111,20 +115,26 @@ export default function TicketsPage() {
           mb: 0.5,
         }}
       >
-        <AppText variant="h5" sx={{ fontWeight: 600 }}>
-          Tickets
-        </AppText>
-        {!loading && (
-          <Chip
-            label={`${tickets.length} total`}
-            size="small"
-            sx={{
-              bgcolor: "grey.100",
-              color: "text.secondary",
-              fontWeight: 600,
-            }}
-          />
-        )}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <AppText variant="h5" sx={{ fontWeight: 600 }}>
+            Tickets
+          </AppText>
+          {!loading && (
+            <Chip
+              label={`${tickets.length} total`}
+              size="small"
+              sx={{ bgcolor: "grey.100", color: "text.secondary", fontWeight: 600 }}
+            />
+          )}
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => navigate("/tickets/new")}
+          sx={{ borderRadius: 2, textTransform: "none", fontWeight: 600 }}
+        >
+          Add Ticket
+        </Button>
       </Box>
 
       <AppText

@@ -1,5 +1,16 @@
 import * as Yup from "yup";
 
+export const ticketSchema = Yup.object({
+  title: Yup.string()
+    .min(5, "Title must be at least 5 characters")
+    .required("Title is required"),
+  description: Yup.string()
+    .min(10, "Description must be at least 10 characters")
+    .required("Description is required"),
+  category_id: Yup.string().required("Please select a category"),
+  priority_id: Yup.string().required("Please select a priority"),
+});
+
 export const loginSchema = Yup.object({
   email: Yup.string()
     .email("Enter a valid email")

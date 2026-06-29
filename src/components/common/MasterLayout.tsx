@@ -213,7 +213,14 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                   primaryTypographyProps={{
                     fontSize: "0.875rem",
                     fontWeight: active ? 700 : 500,
-                    color: active ? "primary.main" : brand.panelText,
+                    color: active ? "primary.main" : "#ffffff",
+                  }}
+                  sx={{
+                    "& .MuiListItemText-primary": {
+                      fontSize: "0.875rem",
+                      fontWeight: active ? 700 : 500,
+                      color: active ? "primary.main" : "#ffffff",
+                    },
                   }}
                 />
                 {active && (

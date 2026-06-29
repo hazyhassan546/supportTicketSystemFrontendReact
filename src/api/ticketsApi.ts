@@ -21,10 +21,20 @@ export type Ticket = {
   status_name: string
 }
 
+export type CreateTicketPayload = {
+  title: string
+  description: string
+  category_id: number
+  priority_id: number
+}
+
 type TicketsResponse = { data: Ticket[] }
+type CreateTicketResponse = { data: Ticket }
 
 const ticketsApi = {
   getTickets: () => axiosInstance.get<TicketsResponse>('/tickets'),
+  createTicket: (payload: CreateTicketPayload) =>
+    axiosInstance.post<CreateTicketResponse>('/tickets', payload),
 }
 
 export default ticketsApi
