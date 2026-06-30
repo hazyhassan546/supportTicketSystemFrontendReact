@@ -12,11 +12,14 @@ import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import { MasterLayout, AppText } from "../components/common";
+import TicketComments from "../components/tickets/TicketComments";
 import { useAppDispatch, useAppSelector } from "../store";
 import {
   fetchTicketById,
   clearSelectedTicket,
 } from "../store/slices/ticketsSlice";
+
+const FINAL_STATUSES = new Set(["resolved", "closed"]);
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -339,6 +342,12 @@ export default function TicketDetailPage() {
               </Paper>
             </Grid>
           </Grid>
+
+          {/* Comments */}
+          <TicketComments
+            ticketId={ticket.id}
+            isReadOnly={FINAL_STATUSES.has(ticket.status_name)}
+          />
         </Box>
       )}
     </MasterLayout>
