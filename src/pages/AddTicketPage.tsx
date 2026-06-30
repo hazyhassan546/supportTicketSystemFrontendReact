@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import Alert from "@mui/material/Alert";
@@ -6,10 +6,19 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import { MasterLayout, AppText, AppInput, AppDropdown, AppButton } from "../components/common";
+import {
+  MasterLayout,
+  AppText,
+  AppInput,
+  AppDropdown,
+  AppButton,
+} from "../components/common";
 import type { DropdownOption } from "../components/common";
 import { useAppDispatch, useAppSelector } from "../store";
-import { createTicketAction, clearTicketError } from "../store/slices/ticketsSlice";
+import {
+  createTicketAction,
+  clearTicketError,
+} from "../store/slices/ticketsSlice";
 import { ticketSchema } from "../schemas/authSchemas";
 
 export default function AddTicketPage() {
@@ -17,23 +26,36 @@ export default function AddTicketPage() {
   const navigate = useNavigate();
   const { submitting, error } = useAppSelector((state) => state.tickets);
   const lookups = useAppSelector((state) => state.lookups.data);
+  const submitModeRef = useRef(false); // false = draft, true = submitted
 
   useEffect(() => {
     dispatch(clearTicketError());
   }, [dispatch]);
 
   const categoryOptions: DropdownOption[] = useMemo(
-    () => (lookups?.categories ?? []).map((c) => ({ label: c.name, value: String(c.id) })),
+    () =>
+      (lookups?.categories ?? []).map((c) => ({
+        label: c.name,
+        value: String(c.id),
+      })),
     [lookups],
   );
 
   const priorityOptions: DropdownOption[] = useMemo(
-    () => (lookups?.priorities ?? []).map((p) => ({ label: p.name, value: String(p.id) })),
+    () =>
+      (lookups?.priorities ?? []).map((p) => ({
+        label: p.name,
+        value: String(p.id),
+      })),
     [lookups],
   );
 
   const departmentOptions: DropdownOption[] = useMemo(
-    () => (lookups?.departments ?? []).map((d) => ({ label: d.name, value: String(d.id) })),
+    () =>
+      (lookups?.departments ?? []).map((d) => ({
+        label: d.name,
+        value: String(d.id),
+      })),
     [lookups],
   );
 
@@ -55,6 +77,7 @@ export default function AddTicketPage() {
           category_id: Number(values.category_id),
           priority_id: Number(values.priority_id),
           department_id: Number(values.department_id),
+          is_submitted: submitModeRef.current,
         }),
       );
       if (createTicketAction.fulfilled.match(result)) {
@@ -70,7 +93,10 @@ export default function AddTicketPage() {
           New Ticket
         </AppText>
       </Box>
-      <AppText variant="body2" sx={{ color: "text.secondary", mb: 3, textAlign:"left" }}>
+      <AppText
+        variant="body2"
+        sx={{ color: "text.secondary", mb: 3, textAlign: "left" }}
+      >
         Fill in the details below to submit a new support ticket.
       </AppText>
 
@@ -114,7 +140,9 @@ export default function AddTicketPage() {
             value={formik.values.description}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.description && Boolean(formik.errors.description)}
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
             helperText={formik.touched.description && formik.errors.description}
           />
 
@@ -126,8 +154,15 @@ export default function AddTicketPage() {
                 value={formik.values.category_id}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.category_id && Boolean(formik.errors.category_id)}
-                helperText={formik.touched.category_id ? formik.errors.category_id : undefined}
+                error={
+                  formik.touched.category_id &&
+                  Boolean(formik.errors.category_id)
+                }
+                helperText={
+                  formik.touched.category_id
+                    ? formik.errors.category_id
+                    : undefined
+                }
                 options={categoryOptions}
                 disabled={!lookups}
               />
@@ -139,8 +174,15 @@ export default function AddTicketPage() {
                 value={formik.values.priority_id}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.priority_id && Boolean(formik.errors.priority_id)}
-                helperText={formik.touched.priority_id ? formik.errors.priority_id : undefined}
+                error={
+                  formik.touched.priority_id &&
+                  Boolean(formik.errors.priority_id)
+                }
+                helperText={
+                  formik.touched.priority_id
+                    ? formik.errors.priority_id
+                    : undefined
+                }
                 options={priorityOptions}
                 disabled={!lookups}
               />
@@ -152,27 +194,66 @@ export default function AddTicketPage() {
                 value={formik.values.department_id}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.department_id && Boolean(formik.errors.department_id)}
-                helperText={formik.touched.department_id ? formik.errors.department_id : undefined}
+                error={
+                  formik.touched.department_id &&
+                  Boolean(formik.errors.department_id)
+                }
+                helperText={
+                  formik.touched.department_id
+                    ? formik.errors.department_id
+                    : undefined
+                }
                 options={departmentOptions}
                 disabled={!lookups}
               />
             </Grid>
           </Grid>
 
-          <Box sx={{ display: "flex", gap: 1.5, pt: 1 }}>
+          <Box sx={{ display: "flex", gap: 1.5, pt: 1, flexWrap: "wrap" }}>
             <AppButton
-              type="submit"
+              type="button"
               variant="contained"
               loading={submitting}
-              sx={{ borderRadius: 2, fontWeight: 600, textTransform: "none", px: 3 }}
+              onClick={() => {
+                submitModeRef.current = true;
+                formik.submitForm();
+              }}
+              sx={{
+                borderRadius: 2,
+                fontWeight: 600,
+                textTransform: "none",
+                px: 3,
+              }}
             >
               Submit Ticket
             </AppButton>
             <AppButton
+              type="button"
               variant="outlined"
+              loading={submitting}
+              onClick={() => {
+                submitModeRef.current = false;
+                formik.submitForm();
+              }}
+              sx={{
+                borderRadius: 2,
+                fontWeight: 600,
+                textTransform: "none",
+                px: 3,
+              }}
+            >
+              Save as Draft
+            </AppButton>
+            <AppButton
+              type="button"
+              variant="text"
               onClick={() => navigate("/tickets")}
-              sx={{ borderRadius: 2, fontWeight: 600, textTransform: "none", px: 3 }}
+              sx={{
+                borderRadius: 2,
+                fontWeight: 600,
+                textTransform: "none",
+                px: 3,
+              }}
             >
               Cancel
             </AppButton>

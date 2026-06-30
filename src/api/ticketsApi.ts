@@ -8,6 +8,7 @@ export type Ticket = {
   category_id: number
   priority_id: number
   status_id: number
+  department_id: number | null
   assigned_to: number | null
   created_at: string
   updated_at: string
@@ -27,7 +28,10 @@ export type CreateTicketPayload = {
   category_id: number
   priority_id: number
   department_id: number
+  is_submitted: boolean
 }
+
+export type UpdateTicketPayload = CreateTicketPayload
 
 type TicketsResponse = { data: Ticket[] }
 type TicketResponse = { data: Ticket }
@@ -37,6 +41,8 @@ const ticketsApi = {
   getTicketById: (id: number) => axiosInstance.get<TicketResponse>(`/tickets/${id}`),
   createTicket: (payload: CreateTicketPayload) =>
     axiosInstance.post<TicketResponse>('/tickets', payload),
+  updateTicket: (id: number, payload: UpdateTicketPayload) =>
+    axiosInstance.put<TicketResponse>(`/tickets/${id}`, payload),
   deleteTicket: (id: number) => axiosInstance.delete(`/tickets/${id}`),
   resolveTicket: (id: number, comment: string) =>
     axiosInstance.patch<TicketResponse>(`/tickets/${id}/resolve`, { comment }),

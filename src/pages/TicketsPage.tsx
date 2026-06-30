@@ -15,6 +15,7 @@ import Tooltip from "@mui/material/Tooltip";
 import AddIcon from "@mui/icons-material/Add";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteForeverOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { MasterLayout, AppText, AppTable } from "../components/common";
 import type { Column } from "../components/common";
@@ -110,7 +111,12 @@ export default function TicketsPage() {
               size="small"
               sx={
                 color
-                  ? { bgcolor: color, color: "#fff", fontWeight: 600, textTransform: "capitalize" }
+                  ? {
+                      bgcolor: color,
+                      color: "#fff",
+                      fontWeight: 600,
+                      textTransform: "capitalize",
+                    }
                   : { textTransform: "capitalize" }
               }
             />
@@ -129,7 +135,12 @@ export default function TicketsPage() {
               variant="outlined"
               sx={
                 color
-                  ? { borderColor: color, color, fontWeight: 600, textTransform: "capitalize" }
+                  ? {
+                      borderColor: color,
+                      color,
+                      fontWeight: 600,
+                      textTransform: "capitalize",
+                    }
                   : { textTransform: "capitalize" }
               }
             />
@@ -152,9 +163,12 @@ export default function TicketsPage() {
         align: "center",
         render: (row) => {
           const isOwner =
-            currentUserId !== null &&
-            (currentUserId === row.user_id || currentUserId === row.assigned_to);
+            currentUserId !== null && currentUserId === row.user_id;
+
+          const isAssigned =
+            currentUserId !== null && currentUserId === row.assigned_to;
           const isFinal = FINAL_STATUSES.has(row.status_name);
+          const isSubmitted = ["open"].includes(row.status_name);
 
           return (
             <Box sx={{ display: "flex", justifyContent: "center", gap: 0.5 }}>
@@ -168,7 +182,21 @@ export default function TicketsPage() {
                 </IconButton>
               </Tooltip>
 
-              {isOwner && !isFinal && (
+              {isOwner && !isFinal && !isSubmitted ? (
+                <Tooltip title="Edit ticket">
+                  <IconButton
+                    size="small"
+                    onClick={() => navigate(`/tickets/${row.id}/edit`)}
+                    sx={{ color: "text.secondary" }}
+                  >
+                    <EditOutlinedIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <></>
+              )}
+
+              {/* {(isOwner || isAssigned) && !isFinal && (
                 <Tooltip title="Mark as resolved">
                   <IconButton
                     size="small"
@@ -178,17 +206,19 @@ export default function TicketsPage() {
                     <CheckCircleOutlineIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-              )}
+              )} */}
 
-              <Tooltip title="Delete ticket">
-                <IconButton
-                  size="small"
-                  onClick={() => setConfirmId(row.id)}
-                  sx={{ color: "error.main" }}
-                >
-                  <DeleteOutlineIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
+              {isOwner && !isFinal && (
+                <Tooltip title="Delete ticket">
+                  <IconButton
+                    size="small"
+                    onClick={() => setConfirmId(row.id)}
+                    sx={{ color: "error.main" }}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Box>
           );
         },
@@ -215,7 +245,11 @@ export default function TicketsPage() {
             <Chip
               label={`${tickets.length} total`}
               size="small"
-              sx={{ bgcolor: "grey.100", color: "text.secondary", fontWeight: 600 }}
+              sx={{
+                bgcolor: "grey.100",
+                color: "text.secondary",
+                fontWeight: 600,
+              }}
             />
           )}
         </Box>
@@ -285,7 +319,9 @@ export default function TicketsPage() {
         PaperProps={{ sx: { borderRadius: 3, minWidth: 440 } }}
       >
         <DialogTitle sx={{ fontWeight: 700 }}>Mark as Resolved</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
           <DialogContentText>
             You are about to mark ticket #{resolveId} as resolved. Please
             provide a resolution comment explaining how the issue was addressed.

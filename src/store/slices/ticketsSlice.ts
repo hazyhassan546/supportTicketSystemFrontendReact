@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import ticketsApi from "../../api/ticketsApi";
-import type { Ticket, CreateTicketPayload } from "../../api/ticketsApi";
+import type {
+  Ticket,
+  CreateTicketPayload,
+  UpdateTicketPayload,
+} from "../../api/ticketsApi";
 
 type TicketsState = {
   tickets: Ticket[];
@@ -84,23 +88,35 @@ export const deleteTicketAction = createAsyncThunk<number, number>(
   },
 );
 
+export const updateTicketAction = createAsyncThunk<
+  Ticket,
+  { id: number; payload: UpdateTicketPayload }
+>("tickets/update", async ({ id, payload }, { rejectWithValue }) => {
+  try {
+    const response = await ticketsApi.updateTicket(id, payload);
+    return response.data.success;
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { message?: string } } }).response?.data
+        ?.message ?? "Failed to update ticket.";
+    return rejectWithValue(message);
+  }
+});
+
 export const resolveTicketAction = createAsyncThunk<
   Ticket,
   { id: number; comment: string }
->(
-  "tickets/resolve",
-  async ({ id, comment }, { rejectWithValue }) => {
-    try {
-      const response = await ticketsApi.resolveTicket(id, comment);
-      return response.data.data;
-    } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { message?: string } } }).response?.data
-          ?.message ?? "Failed to resolve ticket.";
-      return rejectWithValue(message);
-    }
-  },
-);
+>("tickets/resolve", async ({ id, comment }, { rejectWithValue }) => {
+  try {
+    const response = await ticketsApi.resolveTicket(id, comment);
+    return response.data.data;
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { message?: string } } }).response?.data
+        ?.message ?? "Failed to resolve ticket.";
+    return rejectWithValue(message);
+  }
+});
 
 const ticketsSlice = createSlice({
   name: "tickets",
@@ -150,6 +166,21 @@ const ticketsSlice = createSlice({
         state.submitting = false;
       })
       .addCase(createTicketAction.rejected, (state, action) => {
+        state.submitting = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(updateTicketAction.pending, (state) => {
+        state.submitting = true;
+        state.error = null;
+      })
+      .addCase(updateTicketAction.fulfilled, (state, action) => {
+        state.submitting = false;
+        const idx = state.tickets.findIndex((t) => t.id === action.payload.id);
+        if (idx !== -1) state.tickets[idx] = action.payload;
+        state.selectedTicket = action.payload;
+      })
+      .addCase(updateTicketAction.rejected, (state, action) => {
         state.submitting = false;
         state.error = action.payload as string;
       })
