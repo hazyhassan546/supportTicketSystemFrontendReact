@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+import AutoFixHighOutlinedIcon from "@mui/icons-material/AutoFixHighOutlined";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -17,6 +19,7 @@ import {
   clearTicketError,
 } from "../store/slices/ticketsSlice";
 import { ticketSchema } from "../schemas/authSchemas";
+import aiApi from "../api/aiApi";
 
 export default function EditTicketPage() {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +29,8 @@ export default function EditTicketPage() {
   const { selectedTicket: ticket, detailLoading, submitting, error } =
     useAppSelector((state) => state.tickets);
   const lookups = useAppSelector((state) => state.lookups.data);
+  const [improving, setImproving] = useState(false);
+  const [improveError, setImproveError] = useState("");
 
   useEffect(() => {
     dispatch(clearTicketError());
@@ -34,6 +39,21 @@ export default function EditTicketPage() {
       dispatch(clearSelectedTicket());
     };
   }, [dispatch, id]);
+
+  const handleImproveDescription = async () => {
+    const text = formik.values.description.trim();
+    if (!text) return;
+    setImproving(true);
+    setImproveError("");
+    try {
+      const response = await aiApi.improveDescription(text);
+      formik.setFieldValue("description", response.data.data.description);
+    } catch {
+      setImproveError("Failed to improve description. Please try again.");
+    } finally {
+      setImproving(false);
+    }
+  };
 
   const categoryOptions: DropdownOption[] = useMemo(
     () => (lookups?.categories ?? []).map((c) => ({ label: c.name, value: String(c.id) })),
@@ -131,17 +151,47 @@ export default function EditTicketPage() {
               helperText={formik.touched.title && formik.errors.title}
             />
 
-            <AppInput
-              label="Description"
-              name="description"
-              multiline
-              rows={4}
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.description && Boolean(formik.errors.description)}
-              helperText={formik.touched.description && formik.errors.description}
-            />
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
+              <AppInput
+                label="Description"
+                name="description"
+                multiline
+                rows={4}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.description && Boolean(formik.errors.description)}
+                helperText={formik.touched.description && formik.errors.description}
+              />
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={
+                    improving ? (
+                      <CircularProgress size={14} color="inherit" />
+                    ) : (
+                      <AutoFixHighOutlinedIcon fontSize="small" />
+                    )
+                  }
+                  onClick={handleImproveDescription}
+                  disabled={improving || !formik.values.description.trim()}
+                  sx={{
+                    borderRadius: 2,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "0.78rem",
+                  }}
+                >
+                  {improving ? "Improving…" : "Improve using AI"}
+                </Button>
+                {improveError && (
+                  <Box sx={{ fontSize: "0.75rem", color: "error.main" }}>
+                    {improveError}
+                  </Box>
+                )}
+              </Box>
+            </Box>
 
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
