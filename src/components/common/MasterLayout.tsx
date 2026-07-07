@@ -68,6 +68,9 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   const { palette } = useTheme();
   const { brand } = palette;
   const location = useLocation();
+  const user = useAppSelector((s) => s.auth.user);
+  const isAdmin = (user?.role_name ?? "").toLowerCase() === "admin";
+  const navItems = NAV_ITEMS.filter((item) => item.to !== "/users" || isAdmin);
 
   return (
     <Box
@@ -174,7 +177,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
           disablePadding
           sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}
         >
-          {NAV_ITEMS.map(({ label, to, Icon }) => {
+          {navItems.map(({ label, to, Icon }) => {
             const active = location.pathname === to;
             return (
               <ListItemButton

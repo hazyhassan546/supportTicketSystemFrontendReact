@@ -4,6 +4,7 @@ import authReducer from './slices/authSlice'
 import ticketsReducer from './slices/ticketsSlice'
 import lookupsReducer from './slices/lookupsSlice'
 import commentsReducer from './slices/commentsSlice'
+import usersReducer from './slices/usersSlice'
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     tickets: ticketsReducer,
     lookups: lookupsReducer,
     comments: commentsReducer,
+    users: usersReducer,
   },
 })
 

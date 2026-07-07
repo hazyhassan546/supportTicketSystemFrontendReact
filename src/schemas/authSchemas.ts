@@ -21,6 +21,38 @@ export const loginSchema = Yup.object({
     .required("Password is required"),
 });
 
+export const createUserSchema = Yup.object({
+  name: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .required("Full name is required"),
+  email: Yup.string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  phone: Yup.string()
+    .matches(/^\+?[0-9\s\-().]{7,20}$/, "Enter a valid phone number")
+    .notRequired(),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  role_id: Yup.string().required("Please select a role"),
+  department_id: Yup.string().notRequired(),
+});
+
+export const updateUserSchema = Yup.object({
+  name: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .required("Full name is required"),
+  email: Yup.string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  phone: Yup.string()
+    .matches(/^\+?[0-9\s\-().]{7,20}$/, "Enter a valid phone number")
+    .notRequired(),
+  role_id: Yup.string().required("Please select a role"),
+  department_id: Yup.string().notRequired(),
+  status: Yup.string().required("Please select a status"),
+});
+
 export const registerSchema = Yup.object({
   name: Yup.string()
     .min(2, "Name must be at least 2 characters")

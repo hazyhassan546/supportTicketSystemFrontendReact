@@ -6,6 +6,7 @@ import TicketsPage from "../pages/TicketsPage";
 import AddTicketPage from "../pages/AddTicketPage";
 import EditTicketPage from "../pages/EditTicketPage";
 import TicketDetailPage from "../pages/TicketDetailPage";
+import UsersPage from "../pages/UsersPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -52,6 +53,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <TicketDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <UsersPage />
             </ProtectedRoute>
           }
         />
