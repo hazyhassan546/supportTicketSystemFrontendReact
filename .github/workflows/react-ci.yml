@@ -1,0 +1,59 @@
+name: React Web CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  build-and-test:
+
+    name: Test React Application
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+
+      # Check code quality
+      - name: Run ESLint
+        run: npm run lint
+
+
+      # Run unit tests
+      - name: Run Tests
+        run: npm test -- --watchAll=false
+
+
+      # Create production build
+      - name: Build React App
+        run: npm run build
+
+
+      # Save build output
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: build/
