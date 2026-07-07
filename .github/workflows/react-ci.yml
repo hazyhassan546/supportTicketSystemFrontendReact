@@ -20,12 +20,12 @@ jobs:
 
       # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
 
       # Setup Node.js
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -37,11 +37,13 @@ jobs:
 
 
       # Check code quality
+      # Uncomment when lint script exists
       # - name: Run ESLint
       #   run: npm run lint
 
 
       # Run unit tests
+      # Uncomment when tests are configured
       # - name: Run Tests
       #   run: npm test -- --watchAll=false
 
