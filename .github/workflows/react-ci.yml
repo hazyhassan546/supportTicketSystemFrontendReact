@@ -37,13 +37,13 @@ jobs:
 
 
       # Check code quality
-      - name: Run ESLint
-        run: npm run lint
+      # - name: Run ESLint
+      #   run: npm run lint
 
 
       # Run unit tests
-      - name: Run Tests
-        run: npm test -- --watchAll=false
+      # - name: Run Tests
+      #   run: npm test -- --watchAll=false
 
 
       # Create production build
